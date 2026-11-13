@@ -1,0 +1,214 @@
+filters:
+  and:
+    - file.hasTag("hund")
+    - file.hasTag("rasse")
+formulas:
+  schulterhoehe: schulterhoehe_min_cm.toString() + "–" + schulterhoehe_max_cm.toString() + " cm"
+  gewicht: gewicht_min_kg.toString() + "–" + gewicht_max_kg.toString() + " kg"
+  lebenserwartung: lebenserwartung_min.toString() + "–" + lebenserwartung_max.toString() + " J."
+  bewegung: '"★".repeat(bewegungsbedarf) + "☆".repeat(5 - bewegungsbedarf)'
+  pflege: '"★".repeat(fellpflege) + "☆".repeat(5 - fellpflege)'
+  erziehung: '"★".repeat(erziehbarkeit) + "☆".repeat(5 - erziehbarkeit)'
+  anzahl_erkrankungen: if(erkrankungen, erkrankungen.length, 0)
+properties:
+  file.name:
+    displayName: Rasse
+  note.fci_gruppe:
+    displayName: FCI-Gruppe
+  note.fci_standard:
+    displayName: FCI-Nr.
+  note.fci_sektion:
+    displayName: Sektion
+  note.fci_status:
+    displayName: Anerkennung
+  note.arbeitspruefung:
+    displayName: Arbeitsprüfung
+  note.herkunft:
+    displayName: Herkunft
+  note.groesse:
+    displayName: Größe
+  note.felltyp:
+    displayName: Fell
+  note.anfaengergeeignet:
+    displayName: Anfänger
+  note.familienhund:
+    displayName: Familie
+  note.listenhund:
+    displayName: Listenhund
+  note.qualzucht:
+    displayName: Qualzucht
+  note.erkrankungen:
+    displayName: Typische Erkrankungen
+  note.bewegungsbedarf:
+    displayName: Bewegung (1–5)
+  note.fellpflege:
+    displayName: Fellpflege (1–5)
+  formula.schulterhoehe:
+    displayName: Schulterhöhe
+  formula.gewicht:
+    displayName: Gewicht
+  formula.lebenserwartung:
+    displayName: Lebenserwartung
+  formula.bewegung:
+    displayName: Bewegungsbedarf
+  formula.pflege:
+    displayName: Pflegeaufwand
+  formula.erziehung:
+    displayName: Erziehbarkeit
+  formula.anzahl_erkrankungen:
+    displayName: Anzahl Erkrankungen
+  note.bild:
+    displayName: Bild
+views:
+  - type: table
+    name: Alle Hunderassen
+    order:
+      - file.name
+      - fci_gruppe
+      - herkunft
+      - groesse
+      - formula.schulterhoehe
+      - formula.gewicht
+      - formula.lebenserwartung
+      - felltyp
+      - formula.bewegung
+      - formula.pflege
+      - formula.erziehung
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: cards
+    name: Galerie
+    order:
+      - file.name
+      - fci_gruppe
+      - groesse
+      - herkunft
+    sort:
+      - property: file.name
+        direction: ASC
+    image: note.bild
+    imageFit: cover
+    imageAspectRatio: 0.75
+    cardSize: 220
+  - type: table
+    name: Nach FCI-Gruppe
+    groupBy:
+      property: fci_gruppe
+      direction: ASC
+    order:
+      - file.name
+      - fci_sektion
+      - fci_standard
+      - herkunft
+      - groesse
+      - formula.gewicht
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Nach Herkunft
+    groupBy:
+      property: herkunft
+      direction: ASC
+    order:
+      - file.name
+      - fci_gruppe
+      - groesse
+      - formula.gewicht
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Vorläufig anerkannt
+    filters:
+      and:
+        - fci_status == "vorläufig anerkannt"
+    order:
+      - file.name
+      - fci_gruppe
+      - fci_sektion
+      - herkunft
+      - groesse
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Nach Größe
+    groupBy:
+      property: groesse
+      direction: ASC
+    order:
+      - file.name
+      - formula.schulterhoehe
+      - formula.gewicht
+      - formula.lebenserwartung
+    sort:
+      - property: gewicht_max_kg
+        direction: ASC
+  - type: table
+    name: Anfängergeeignet
+    filters:
+      and:
+        - anfaengergeeignet == true
+    order:
+      - file.name
+      - groesse
+      - familienhund
+      - formula.bewegung
+      - formula.pflege
+      - formula.erziehung
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Hoher Bewegungsbedarf
+    filters:
+      and:
+        - bewegungsbedarf >= 4
+    order:
+      - file.name
+      - fci_gruppe
+      - formula.bewegung
+      - formula.erziehung
+      - anfaengergeeignet
+    sort:
+      - property: bewegungsbedarf
+        direction: DESC
+  - type: table
+    name: Pflegeleicht
+    filters:
+      and:
+        - fellpflege <= 2
+    order:
+      - file.name
+      - felltyp
+      - formula.pflege
+      - groesse
+    sort:
+      - property: fellpflege
+        direction: ASC
+  - type: table
+    name: Qualzucht & Listenhunde
+    filters:
+      or:
+        - qualzucht == true
+        - listenhund == true
+    order:
+      - file.name
+      - qualzucht
+      - listenhund
+      - erkrankungen
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Gesundheit
+    order:
+      - file.name
+      - formula.lebenserwartung
+      - formula.anzahl_erkrankungen
+      - erkrankungen
+    sort:
+      - property: lebenserwartung_max
+        direction: ASC

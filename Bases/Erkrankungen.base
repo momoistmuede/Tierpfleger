@@ -1,0 +1,72 @@
+filters:
+  and:
+    - file.hasTag("erkrankung")
+properties:
+  file.name:
+    displayName: Erkrankung
+  note.aliases:
+    displayName: Abkürzung / Synonyme
+  note.tierart:
+    displayName: Tierart
+  note.organsystem:
+    displayName: Organsystem
+  note.erblich:
+    displayName: Erblich
+views:
+  - type: table
+    name: Alle Erkrankungen
+    order:
+      - file.name
+      - aliases
+      - tierart
+      - organsystem
+      - erblich
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Nach Organsystem
+    groupBy:
+      property: organsystem
+      direction: ASC
+    order:
+      - file.name
+      - tierart
+      - erblich
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Erblich
+    filters:
+      and:
+        - erblich == true
+    order:
+      - file.name
+      - tierart
+      - organsystem
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Hund
+    filters:
+      and:
+        - tierart.contains(link("Hund"))
+    order:
+      - file.name
+      - organsystem
+      - erblich
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Katze
+    filters:
+      and:
+        - tierart.contains(link("Katze"))
+    order:
+      - file.name
+      - organsystem
+      - erblich
+    sort: []

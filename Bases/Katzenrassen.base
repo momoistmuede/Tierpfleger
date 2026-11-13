@@ -1,0 +1,231 @@
+filters:
+  and:
+    - file.hasTag("katze")
+    - file.hasTag("rasse")
+formulas:
+  gewicht: gewicht_min_kg.toString() + "–" + gewicht_max_kg.toString() + " kg"
+  lebenserwartung: lebenserwartung_min.toString() + "–" + lebenserwartung_max.toString() + " J."
+  aktiv: '"★".repeat(aktivitaet) + "☆".repeat(5 - aktivitaet)'
+  pflege: '"★".repeat(fellpflege) + "☆".repeat(5 - fellpflege)'
+  gespraechig: '"★".repeat(gespraechigkeit) + "☆".repeat(5 - gespraechigkeit)'
+  anhaenglich: '"★".repeat(menschenbezogenheit) + "☆".repeat(5 - menschenbezogenheit)'
+  anzahl_erkrankungen: if(erkrankungen, erkrankungen.length, 0)
+  anzahl_verbaende: if(anerkannt_von, anerkannt_von.length, 0)
+properties:
+  file.name:
+    displayName: Rasse
+  note.herkunft:
+    displayName: Herkunft
+  note.felllaenge:
+    displayName: Felllänge
+  note.wohnungshaltung:
+    displayName: Wohnung
+  note.anfaengergeeignet:
+    displayName: Anfänger
+  note.qualzucht:
+    displayName: Qualzucht
+  note.erkrankungen:
+    displayName: Typische Erkrankungen
+  formula.gewicht:
+    displayName: Gewicht
+  formula.lebenserwartung:
+    displayName: Lebenserwartung
+  formula.aktiv:
+    displayName: Aktivität
+  formula.pflege:
+    displayName: Pflegeaufwand
+  formula.gespraechig:
+    displayName: Gesprächigkeit
+  formula.anhaenglich:
+    displayName: Menschenbezogenheit
+  formula.anzahl_erkrankungen:
+    displayName: Anzahl Erkrankungen
+  formula.anzahl_verbaende:
+    displayName: Anzahl Verbände
+  note.anerkannt_von:
+    displayName: Anerkannt von
+  note.fife_status:
+    displayName: FIFe
+  note.fife_code:
+    displayName: EMS-Code
+  note.tica_status:
+    displayName: TICA
+  note.tica_code:
+    displayName: TICA-Code
+  note.wcf_status:
+    displayName: WCF
+  note.wcf_code:
+    displayName: WCF-Code
+  note.bild:
+    displayName: Bild
+views:
+  - type: table
+    name: Alle Katzenrassen
+    order:
+      - file.name
+      - herkunft
+      - felllaenge
+      - formula.gewicht
+      - formula.lebenserwartung
+      - formula.aktiv
+      - formula.pflege
+      - formula.gespraechig
+      - formula.anhaenglich
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: cards
+    name: Galerie
+    order:
+      - file.name
+      - herkunft
+      - felllaenge
+      - anerkannt_von
+    sort:
+      - property: file.name
+        direction: ASC
+    image: note.bild
+    imageFit: cover
+    imageAspectRatio: 0.75
+    cardSize: 220
+  - type: table
+    name: Anerkennung
+    order:
+      - file.name
+      - fife_status
+      - fife_code
+      - tica_status
+      - wcf_status
+      - formula.anzahl_verbaende
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: FIFe
+    filters:
+      and:
+        - fife_status != "nicht anerkannt"
+    order:
+      - file.name
+      - fife_status
+      - fife_code
+      - felllaenge
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: TICA
+    filters:
+      and:
+        - tica_status != "nicht anerkannt"
+    order:
+      - file.name
+      - tica_status
+      - tica_code
+      - felllaenge
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: WCF
+    filters:
+      and:
+        - wcf_status != "nicht anerkannt"
+    order:
+      - file.name
+      - wcf_status
+      - wcf_code
+      - felllaenge
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Nur ein Verband
+    filters:
+      and:
+        - formula.anzahl_verbaende == 1
+    order:
+      - file.name
+      - anerkannt_von
+      - fife_status
+      - tica_status
+      - wcf_status
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Nach Felllänge
+    groupBy:
+      property: felllaenge
+      direction: ASC
+    order:
+      - file.name
+      - herkunft
+      - formula.pflege
+      - formula.gewicht
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Wohnungshaltung
+    filters:
+      and:
+        - wohnungshaltung == true
+    order:
+      - file.name
+      - formula.aktiv
+      - formula.anhaenglich
+      - anfaengergeeignet
+    sort:
+      - property: aktivitaet
+        direction: ASC
+  - type: table
+    name: Anfängergeeignet
+    filters:
+      and:
+        - anfaengergeeignet == true
+    order:
+      - file.name
+      - felllaenge
+      - wohnungshaltung
+      - formula.pflege
+      - formula.aktiv
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Pflegeleicht
+    filters:
+      and:
+        - fellpflege <= 2
+    order:
+      - file.name
+      - felllaenge
+      - formula.pflege
+    sort:
+      - property: fellpflege
+        direction: ASC
+  - type: table
+    name: Sehr aktiv
+    filters:
+      and:
+        - aktivitaet >= 4
+    order:
+      - file.name
+      - formula.aktiv
+      - formula.gespraechig
+      - wohnungshaltung
+    sort:
+      - property: aktivitaet
+        direction: DESC
+  - type: table
+    name: Gesundheit
+    order:
+      - file.name
+      - qualzucht
+      - formula.lebenserwartung
+      - formula.anzahl_erkrankungen
+      - erkrankungen
+    sort:
+      - property: file.name
+        direction: ASC
